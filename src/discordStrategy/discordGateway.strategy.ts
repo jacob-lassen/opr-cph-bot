@@ -1,5 +1,4 @@
 import { CustomTransportStrategy, MessageHandler, Server } from '@nestjs/microservices';
-import { ConstructorOptions } from './interfaces/constructorOptions.interface';
 import { DiscordConfig } from 'src/config/interfaces/discordConfig.interface';
 
 export class discordGatewayStrategy extends Server implements CustomTransportStrategy {
@@ -10,9 +9,10 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
 
     constructor(options: DiscordConfig) {
         super();
+        this.handlers = new Map();
         this.listenerPromises = [];
         this.ws = new WebSocket('wss://gateway.discord.gg/?v=10&encoding=json');
-        const connectionPromise = new Promise<void>((resolve, reject) => {
+        this.connectionPromise = new Promise<void>((resolve, reject) => {
             this.ws.onopen = () => {
                 const payload = {
                     op: 2,
@@ -26,7 +26,6 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
                         }
                     }
                 }
-                console.log(payload);
                 this.ws.send(JSON.stringify(payload));
                 resolve();
             };
@@ -41,9 +40,14 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
 
             if (op === 10) {
                 const heartbeatInterval = d.heartbeat_interval;
-                this.heartbeat(heartbeatInterval);
+                return this.heartbeat(heartbeatInterval);
             }
-            console.log(payload);
+
+            if (this.handlers.has(t)) {
+                return this.handlers.get(t)(d);
+            }
+
+            console.log(payload.t);
         };
     }
 
@@ -53,8 +57,8 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
         }, ms)
     }
 
-    addHandler(event: string, callback: MessageHandler, isEventHandler?: boolean, extras?: Record<string, any>): void {
-        this.listenerPromises.push(this.attachHandler(event, callback));
+    addHandler(pattern: string, callback: MessageHandler, isEventHandler?: boolean, extras?: Record<string, any>): void {
+        this.listenerPromises.push(this.attachHandler(pattern, callback));
     }
     
     public async listen(callback: () => void) {
@@ -67,7 +71,7 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
         // Implement the logic here
     }
 
-    private async attachHandler(event: string, callback: MessageHandler) {
-        this.handlers.set(event, callback);
+    private async attachHandler(pattern: string, callback: MessageHandler) {
+        this.handlers.set(pattern, callback);
     }
 }
