@@ -1,3 +1,4 @@
+const { HttpException } = require('@nestjs/common');
 const axios = require('axios');
 
 const discordUrl = 'https://discord.com/api'
@@ -42,7 +43,7 @@ async function discordHttp({ path, method, data }) {
             'Authorization': `Bot ${process.env.DISCORD_TOKEN}`,
         },
     };
-
+    
     if (data) {
         options.data = data;
     }
@@ -52,7 +53,10 @@ async function discordHttp({ path, method, data }) {
 
     if (result.status === 'rejected') {
         await rateLimiter.endRun(10);
-        throw new Error(JSON.stringify(result));
+        throw new HttpException({
+            status: 500,
+            error: result.reason,
+        }, 500);
     }
 
     // await rateLimiter.endRun(result.value.headers['x-ratelimit-reset-after']);

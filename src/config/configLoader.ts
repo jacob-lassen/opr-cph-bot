@@ -13,6 +13,8 @@ function initConfig() {
     config = {
         discord: {
             token: process.env.DISCORD_TOKEN,
+            generalChannelId: process.env.GENERAL_CHANNEL_ID,
+            meetUpChannelId: process.env.MEET_UP_CHANNEL_ID,
         }
     }
 }
