@@ -4,11 +4,13 @@ import { EventEntityType } from "../interfaces/eventEntityType.enum";
 import { invitesService } from "src/invites/services/invites.service";
 import { ScheduledEventsRepository } from "../repositories/scheduledEvents.repository";
 import { ScheduledEvent } from "../interfaces/scheduledEvent.interface";
+import { ThreadMembersService } from "src/threads/services/threadMembers.service";
 
 @Injectable()
 export class ScheduledEventsService {
     constructor(
         private readonly threadService: ThreadsService,
+        private readonly threadMembersService: ThreadMembersService,
         private readonly inviteService: invitesService,
         private readonly scheduledEventsRepository: ScheduledEventsRepository,
     ) {}
@@ -25,8 +27,10 @@ export class ScheduledEventsService {
 
         // Make thread
         const threadName = makeThreadName(event);
-        await this.threadService.createThread(threadName, inviteLink);
+        const thread = await this.threadService.createThread(threadName, inviteLink);
+        event.threadId = thread.id;
 
+        // Save event
         await this.scheduledEventsRepository.createEvent(event);
     }
 
@@ -43,7 +47,9 @@ export class ScheduledEventsService {
         }
 
         // Add member to thread
-        // ToDo Channelservice.addMember(channelId, memberId);
+        this.threadMembersService.addMember(event.threadId, memberId);
+
+        // Add to saved members list
         const threadMembers = event.threadMembers;
         threadMembers.push(memberId);
         this.scheduledEventsRepository.updateEvent(eventId, { threadMembers: threadMembers});
