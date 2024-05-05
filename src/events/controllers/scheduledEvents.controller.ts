@@ -3,6 +3,7 @@ import { Pattern } from "src/discordStrategy/decorators/pattern.decorator";
 import { GuildScheduleEventCreateDto } from "../dtos/guildScheduleEventCreate.dto";
 import { ScheduledEventsService } from "../services/scheduledEvents.service";
 import { ScheduledEvent } from "../interfaces/scheduledEvent.interface";
+import { guildScheduledEventUserAddDto } from "../dtos/guildScheduledEventUserAdd.dto";
 
 @Controller()
 export class ScheduledEventsController {
@@ -26,7 +27,7 @@ export class ScheduledEventsController {
     }
 
     @Pattern('GUILD_SCHEDULED_EVENT_USER_ADD')
-    async onUserAdd(payload: any) {
-        console.log('add user');
+    async onUserAdd(payload: guildScheduledEventUserAddDto) {
+        this.ScheduledEventsService.addMember(payload.guild_scheduled_event_id, payload.user_id);
     }
 }

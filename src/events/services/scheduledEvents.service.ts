@@ -13,7 +13,7 @@ export class ScheduledEventsService {
         private readonly scheduledEventsRepository: ScheduledEventsRepository,
     ) {}
 
-    async initialize(event: ScheduledEvent) {
+    async initialize(event: ScheduledEvent): Promise<void> {
         if (event.entityType !== EventEntityType.EXTERNAL) {
             return;
         }
@@ -29,6 +29,29 @@ export class ScheduledEventsService {
 
         await this.scheduledEventsRepository.createEvent(event);
     }
+
+    async addMember(eventId: number, memberId: number): Promise<void> {
+        let event: ScheduledEvent;
+        event = await this.scheduledEventsRepository.getEvent(eventId);
+        if (!event) {
+            await delay(3000);
+            event = await this.scheduledEventsRepository.getEvent(eventId);
+        }
+
+        if (!event) {
+            return;
+        }
+
+        // Add member to thread
+        // ToDo Channelservice.addMember(channelId, memberId);
+        const threadMembers = event.threadMembers;
+        threadMembers.push(memberId);
+        this.scheduledEventsRepository.updateEvent(eventId, { threadMembers: threadMembers});
+    }
+}
+
+function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function makeThreadName(event: ScheduledEvent) {
