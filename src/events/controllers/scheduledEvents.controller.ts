@@ -12,6 +12,5 @@ export class scheduledEventsController {
     @Pattern('GUILD_SCHEDULED_EVENT_CREATE')
     async onNewEvent(payload: GuildScheduleEventCreateDto) {
         this.ScheduledEventsService.initialize(payload);
-        // ToDo stop accepting new event when error occurs
     }
 }

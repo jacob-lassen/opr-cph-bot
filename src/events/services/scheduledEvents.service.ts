@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { GuildScheduleEventCreateDto } from "../dtos/guildScheduleEventCreate.dto";
 import { ThreadsService } from "src/threads/services/threads.service";
 import { EventEntityType } from "../interfaces/eventEntityType.enum";
-import { InvitesRepository } from "src/invites/repositories/invites.repository";
 import { invitesService } from "src/invites/services/invites.service";
 
 @Injectable()

@@ -44,6 +44,7 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
             }
 
             if (this.handlers.has(t)) {
+                // ToDo when handler throws it stops listening
                 return this.handlers.get(t)(d);
             }
             console.log(`${op} - ${t}`);
