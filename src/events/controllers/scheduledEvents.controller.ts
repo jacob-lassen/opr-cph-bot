@@ -13,4 +13,9 @@ export class scheduledEventsController {
     async onNewEvent(payload: GuildScheduleEventCreateDto) {
         this.ScheduledEventsService.initialize(payload);
     }
+
+    @Pattern('GUILD_SCHEDULED_EVENT_USER_ADD')
+    async onUserAdd(payload: any) {
+        console.log('add user');
+    }
 }
