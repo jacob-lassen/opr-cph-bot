@@ -23,11 +23,11 @@ export class ScheduledEventsController {
             threadId: null,
             threadMembers: [],
         }
-        this.ScheduledEventsService.initialize(event);
+        await this.ScheduledEventsService.initialize(event);
     }
 
     @Pattern('GUILD_SCHEDULED_EVENT_USER_ADD')
     async onUserAdd(payload: guildScheduledEventUserAddDto) {
-        this.ScheduledEventsService.addMember(payload.guild_scheduled_event_id, payload.user_id);
+        await this.ScheduledEventsService.addMember(payload.guild_scheduled_event_id, payload.user_id);
     }
 }

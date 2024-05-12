@@ -5,6 +5,7 @@ import configLoader from './config/configLoader';
 import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from './events/events.module';
 import { FileStoreModule } from './fileStore/fileStore.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { FileStoreModule } from './fileStore/fileStore.module';
         }),
         EventsModule,
         FileStoreModule,
+        LoggerModule
     ],
     controllers: [AppController],
     providers: [AppService],
