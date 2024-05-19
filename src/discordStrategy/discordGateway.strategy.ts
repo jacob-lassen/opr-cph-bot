@@ -32,10 +32,6 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
             this.onMessage(message);
         }
 
-        setTimeout(() => {
-            this.connect();
-        }, 1000 * 45)
-
         return new Promise<void>((resolve, reject) => {
             this.ws.onopen = () => {
                 const payload = {
