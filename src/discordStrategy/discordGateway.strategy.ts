@@ -1,23 +1,47 @@
 import { CustomTransportStrategy, MessageHandler, Server } from '@nestjs/microservices';
+import { timeout } from 'rxjs';
 import { DiscordConfig } from 'src/config/interfaces/discordConfig.interface';
 
 export class discordGatewayStrategy extends Server implements CustomTransportStrategy {
     private listenerPromises: Promise<void>[];
     private connectionPromise: Promise<void>;
     private ws: WebSocket;
+    private discordConfig: DiscordConfig;
     private handlers: Map<string, MessageHandler>;
 
     constructor(options: DiscordConfig) {
         super();
+        this.discordConfig = options;
         this.handlers = new Map();
         this.listenerPromises = [];
+        this.connectionPromise = this.connect();
+    }
+
+    connect() {
         this.ws = new WebSocket('wss://gateway.discord.gg/?v=10&encoding=json');
-        this.connectionPromise = new Promise<void>((resolve, reject) => {
+
+        this.ws.onerror = (error) => {
+            console.log(error);
+        };
+
+        this.ws.onclose = () => {
+            console.log('Connection closed');
+        };
+
+        this.ws.onmessage = (message) => {
+            this.onMessage(message);
+        }
+
+        setTimeout(() => {
+            this.connect();
+        }, 1000 * 45)
+
+        return new Promise<void>((resolve, reject) => {
             this.ws.onopen = () => {
                 const payload = {
                     op: 2,
                     d: {
-                        token: options.token,
+                        token: this.discordConfig.token,
                         intents: 65536,
                         properties: {
                             $os: 'linux',
@@ -29,18 +53,23 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
                 this.ws.send(JSON.stringify(payload));
                 resolve();
             };
-            this.ws.onerror = (error) => {
-                console.log(error);
-            };
         });
+    }
 
-        this.ws.onmessage = (message) => {
-            const payload = JSON.parse(message.data);
+    onMessage(message) {
+        const payload = JSON.parse(message.data);
             const { t, event, op, d } = payload;
 
+            // Hello
             if (op === 10) {
                 const heartbeatInterval = d.heartbeat_interval;
                 return this.heartbeat(heartbeatInterval);
+            }
+
+            // Reconnect
+            if (op === 7) {
+                this.ws.close();
+                return this.connect();
             }
 
             if (this.handlers.has(t)) {
@@ -48,7 +77,6 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
                 return this.handlers.get(t)(d);
             }
             console.log(`${op} - ${t}`);
-        };
     }
 
     heartbeat(ms) {
