@@ -21,7 +21,8 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
         this.ws = new WebSocket('wss://gateway.discord.gg/?v=10&encoding=json');
 
         this.ws.onerror = (error) => {
-            console.log(error);
+            console.log('Web socket error')
+            console.log(JSON.stringify(error));
         };
 
         this.ws.onclose = () => {
