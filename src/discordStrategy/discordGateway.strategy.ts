@@ -1,5 +1,4 @@
 import { CustomTransportStrategy, MessageHandler, Server } from '@nestjs/microservices';
-import { timeout } from 'rxjs';
 import { DiscordConfig } from 'src/config/interfaces/discordConfig.interface';
 
 export class discordGatewayStrategy extends Server implements CustomTransportStrategy {
@@ -25,8 +24,12 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
             console.log(JSON.stringify(error));
         };
 
-        this.ws.onclose = () => {
+        this.ws.onclose = (event) => {
             console.log('Connection closed');
+            console.log(JSON.stringify(event));
+            setTimeout(() => {
+                this.connect();
+            }, 5000);
         };
 
         this.ws.onmessage = (message) => {
