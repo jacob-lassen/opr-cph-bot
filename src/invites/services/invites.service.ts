@@ -7,7 +7,7 @@ export class invitesService {
         private readonly InvitesRepository: InvitesRepository,
     ) {}
 
-    async createInvite(expiresAt: Date) {
-        return this.InvitesRepository.createInvite(expiresAt);
+    async createInvite() {
+        return this.InvitesRepository.createInvite();
     }
 }

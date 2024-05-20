@@ -21,8 +21,7 @@ export class ScheduledEventsService {
         }
 
         // Make invite link
-        const expiresAt = new Date(event.startTime);
-        const invite = await this.inviteService.createInvite(expiresAt);
+        const invite = await this.inviteService.createInvite();
         const inviteLink = `https://discord.gg/${invite.code}?event=${event.id}`;
 
         // Make thread
