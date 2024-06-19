@@ -11,7 +11,6 @@ export class ScheduledEventsService {
     constructor(
         private readonly threadService: ThreadsService,
         private readonly threadMembersService: ThreadMembersService,
-        private readonly inviteService: invitesService,
         private readonly scheduledEventsRepository: ScheduledEventsRepository,
     ) {}
 
@@ -20,9 +19,8 @@ export class ScheduledEventsService {
             return;
         }
 
-        // Make invite link
-        const invite = await this.inviteService.createInvite();
-        const inviteLink = `https://discord.gg/${invite.code}?event=${event.id}`;
+        // Make event link
+        const inviteLink = `https://discord.com/events/${event.guildId}/${event.id}`;
 
         // Make thread
         const threadName = makeThreadName(event);

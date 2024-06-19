@@ -15,6 +15,7 @@ export class ScheduledEventsController {
     async onNewEvent(payload: GuildScheduleEventCreateDto) {
         const event: ScheduledEvent = {
             id: payload.id,
+            guildId: payload.guild_id,
             entityType: payload.entity_type,
             name: payload.name,
             startTime: new Date(payload.scheduled_start_time),
