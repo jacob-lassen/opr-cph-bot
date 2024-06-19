@@ -21,7 +21,7 @@ export class discordGatewayStrategy extends Server implements CustomTransportStr
 
         this.ws.onerror = (error) => {
             console.log('Web socket error');
-            console.log(error);
+            console.error(error);
             console.log('JSON stringify');
             console.log(JSON.stringify(error));
         };
