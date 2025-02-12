@@ -28,8 +28,5 @@ async function bootstrap() {
   // initialize
   const initializeFileStoreService = app.get<InitializeFileStoreService>(InitializeFileStoreService);
   await initializeFileStoreService.initializeStore();
-
-  // Start app
-  await discordApp.listen();
 }
 bootstrap();

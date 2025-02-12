@@ -23,6 +23,7 @@ export class ScheduledEventsController {
             createdBy: payload.creator_id,
             threadId: null,
             threadMembers: [],
+            location: payload.entity_metadata?.location || null,
         }
         await this.ScheduledEventsService.initialize(event);
     }

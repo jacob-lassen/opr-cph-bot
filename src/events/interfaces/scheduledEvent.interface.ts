@@ -10,4 +10,5 @@ export interface ScheduledEvent {
     threadId: number | null;
     threadMembers: number[];
     entityType: EventEntityType;
+    location: string;
 }

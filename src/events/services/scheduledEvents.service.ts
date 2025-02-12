@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ThreadsService } from "src/threads/services/threads.service";
 import { EventEntityType } from "../interfaces/eventEntityType.enum";
-import { invitesService } from "src/invites/services/invites.service";
 import { ScheduledEventsRepository } from "../repositories/scheduledEvents.repository";
 import { ScheduledEvent } from "../interfaces/scheduledEvent.interface";
 import { ThreadMembersService } from "src/threads/services/threadMembers.service";
@@ -28,7 +27,7 @@ export class ScheduledEventsService {
         event.threadId = thread.id;
 
         // Save event
-        await this.scheduledEventsRepository.createEvent(event);
+        await this.scheduledEventsRepository.saveEventCache(event);
     }
 
     async addMember(eventId: number, memberId: number): Promise<void> {
@@ -53,11 +52,11 @@ export class ScheduledEventsService {
     }
 }
 
-function delay(ms: number) {
+function delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function makeThreadName(event: ScheduledEvent) {
+function makeThreadName(event: ScheduledEvent): string {
     const start = new Date(event.startTime);
     const month = start.toLocaleString('da-DK', { month: 'long' });
     const day = start.toLocaleString('da-DK', { day: 'numeric' }).replace(/\.$/, '');

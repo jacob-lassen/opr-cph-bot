@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from './events/events.module';
 import { FileStoreModule } from './fileStore/fileStore.module';
 import { LoggerModule } from './logger/logger.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
@@ -14,7 +15,8 @@ import { LoggerModule } from './logger/logger.module';
         }),
         EventsModule,
         FileStoreModule,
-        LoggerModule
+        LoggerModule,
+        ScheduleModule.forRoot(),
     ],
     controllers: [AppController],
     providers: [AppService],
