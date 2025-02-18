@@ -9,6 +9,7 @@ import { ScheduleEventsJob } from "./jobs/scheduleEvents.job";
 import { ScheduleRepository } from "./repositories/schedule.repository";
 import { ConfigModule } from "@nestjs/config";
 import { DiscordModule } from "src/discord/discord.module";
+import { MessageModule } from "src/message/message.module";
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { DiscordModule } from "src/discord/discord.module";
         FileStoreModule,
         ConfigModule,
         DiscordModule,
+        MessageModule,
     ],
     controllers: [
         ScheduledEventsController,

@@ -7,6 +7,8 @@ import { ScheduledEventsRepository } from "../repositories/scheduledEvents.repos
 import { ScheduledEvent } from "../interfaces/scheduledEvent.interface";
 import { ConfigService } from "@nestjs/config";
 import { EventEntityType } from "../interfaces/eventEntityType.enum";
+import { MessageRepository } from "src/message/repositories/message.repository";
+import { DiscordConfig } from "src/config/interfaces/discordConfig.interface";
 
 const daysMap = new Map<number, Days>();
 daysMap.set(1, Days.MONDAY);
@@ -22,12 +24,14 @@ export class ScheduleEventsJob {
     constructor(
         private readonly scheduleRepository: ScheduleRepository,
         private readonly scheduledEventsRepository: ScheduledEventsRepository,
+        private readonly MessageRepository: MessageRepository,
         private readonly configService: ConfigService,
     ) {}
 
-    @Cron('0 0 9 * * *', { name: 'schedule-events' })
+    @Cron('0 0 9 * * *', { name: 'schedule-events', timeZone: 'Europe/Copenhagen' })
     async handle() {
-        const discordConfig = this.configService.get('discord');
+        console.log('Scheduling events');
+        const discordConfig = this.configService.get('discord') as DiscordConfig;
         const schedule = await this.scheduleRepository.getSchedule();
         const promises = schedule.map(async (schedule: Schedule) => {
             const eventDate = DateTime.now().setZone('Europe/Copenhagen').plus({ days: schedule.createNDaysBefore });
@@ -42,7 +46,7 @@ export class ScheduleEventsJob {
 
             const scheduledEvent: ScheduledEvent = {
                 id: null,
-                guildId: discordConfig.guildId,
+                guildId: parseInt(discordConfig.guildId),
                 name: schedule.eventName,
                 startTime: start.toJSDate(),
                 endTime: end.toJSDate(),
@@ -52,7 +56,9 @@ export class ScheduleEventsJob {
                 entityType: EventEntityType.EXTERNAL,
                 location: schedule.location,
             };
-            await this.scheduledEventsRepository.createEvent(scheduledEvent);
+            const response = await this.scheduledEventsRepository.createEvent(scheduledEvent);
+            const inviteLink = `https://discord.com/events/${scheduledEvent.guildId}/${response.id}`;
+            await this.MessageRepository.sendMessage(inviteLink, discordConfig.generalChannelId);
         });
         await Promise.all(promises);
     }

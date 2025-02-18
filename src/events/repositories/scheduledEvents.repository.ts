@@ -15,27 +15,33 @@ export class ScheduledEventsRepository {
 
     async createEvent(event: ScheduledEvent): Promise<ScheduledEvent> {
         const discordConfig: DiscordConfig = this.configService.get('discord');
-        try {
-            const response = await this.discordHttpService.request({
-                method: 'post',
-                path: `/guilds/${discordConfig.guildId}/scheduled-events`,
-                data: {
-                    name: event.name,
-                    privacy_level: 2,
-                    scheduled_start_time: event.startTime.toISOString(),
-                    scheduled_end_time: event.endTime.toISOString(),
-                    entity_type: event.entityType,
-                    entity_metadata: {
-                        location: event.location,
-                    }
+        const response = await this.discordHttpService.request({
+            method: 'post',
+            path: `/guilds/${discordConfig.guildId}/scheduled-events`,
+            data: {
+                name: event.name,
+                privacy_level: 2,
+                scheduled_start_time: event.startTime.toISOString(),
+                scheduled_end_time: event.endTime.toISOString(),
+                entity_type: event.entityType,
+                entity_metadata: {
+                    location: event.location,
                 }
-            });
-            console.log(response);
-        } catch (error) {
-            console.error(error);
-            return event;
-        }
-        return event;
+            }
+        });
+
+        return {
+            id: response.id,
+            guildId: response.guild_id,
+            name: response.name,
+            entityType: response.entity_type,
+            startTime: new Date(response.scheduled_start_time),
+            endTime: new Date(response.scheduled_end_time),
+            createdBy: response.creator_id,
+            threadId: null,
+            threadMembers: [],
+            location: response.entity_metadata?.location || null,
+        };
     }
 
     async saveEventCache(event: ScheduledEvent): Promise<ScheduledEvent> {

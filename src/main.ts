@@ -12,7 +12,6 @@ async function bootstrap() {
   await configLoader.init();
   const app = await NestFactory.create(AppModule);
   app.useLogger(app.get(CustomLogger));
-  await app.listen(3000);
 
   // Discord microservice
   const configService = app.get<ConfigService>(ConfigService);
@@ -28,5 +27,7 @@ async function bootstrap() {
   // initialize
   const initializeFileStoreService = app.get<InitializeFileStoreService>(InitializeFileStoreService);
   await initializeFileStoreService.initializeStore();
+
+  await discordApp.listen();
 }
 bootstrap();
