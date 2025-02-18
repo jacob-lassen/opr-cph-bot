@@ -25,7 +25,7 @@ export class ScheduleEventsJob {
         private readonly configService: ConfigService,
     ) {}
 
-    @Cron('*/5 * * * * *', { name: 'schedule-events' })
+    @Cron('0 0 9 * * *', { name: 'schedule-events' })
     async handle() {
         const discordConfig = this.configService.get('discord');
         const schedule = await this.scheduleRepository.getSchedule();
