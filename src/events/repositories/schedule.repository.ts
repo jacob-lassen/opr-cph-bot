@@ -10,7 +10,7 @@ export class ScheduleRepository {
             {
                 eventName: 'firefight',
                 startTime: '16:30',
-                weeks: Weeks.EVEN,
+                weeks: Weeks.ODD,
                 dayOfWeek: Days.MONDAY,
                 durationMinutes: 210,
                 createNDaysBefore: 5,
