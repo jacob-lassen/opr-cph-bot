@@ -28,7 +28,7 @@ export class ScheduleEventsJob {
         private readonly configService: ConfigService,
     ) {}
 
-    @Cron('0 06 18 * * *', { name: 'schedule-events', timeZone: 'Europe/Copenhagen' })
+    @Cron('0 0 9 * * *', { name: 'schedule-events', timeZone: 'Europe/Copenhagen' })
     async handle() {
         console.log('Scheduling events');
         const discordConfig = this.configService.get('discord') as DiscordConfig;
