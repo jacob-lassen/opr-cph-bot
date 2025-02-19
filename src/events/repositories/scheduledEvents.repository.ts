@@ -49,7 +49,7 @@ export class ScheduledEventsRepository {
         return event;
     }
 
-    async getEvent(id: number): Promise<ScheduledEvent> | null {
+    async getEvent(id: string): Promise<ScheduledEvent> | null {
         const event = await this.fileStoreService.getFile(this.fileStoreService.fileStoreTypes.EVENT, id.toString());
         if (!event) {
             return null;
@@ -57,7 +57,7 @@ export class ScheduledEventsRepository {
         return event as ScheduledEvent;
     }
 
-    async updateEvent(eventId: number, updates: Partial<ScheduledEvent>): Promise<ScheduledEvent> {
+    async updateEvent(eventId: string, updates: Partial<ScheduledEvent>): Promise<ScheduledEvent> {
         const event = await this.fileStoreService.updateFile(this.fileStoreService.fileStoreTypes.EVENT, eventId.toString(), updates);
         return event as ScheduledEvent;
     }

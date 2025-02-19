@@ -7,7 +7,7 @@ export class ThreadMembersService {
         private readonly threadMembersRepository: ThreadMembersRepository,
     ) {}
 
-    async addMember(channelId: number, memberId: number): Promise<void> {
+    async addMember(channelId: string, memberId: string): Promise<void> {
         return this.threadMembersRepository.addMember(channelId, memberId);
     }
 }

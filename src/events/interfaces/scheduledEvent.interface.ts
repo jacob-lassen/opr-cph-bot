@@ -1,14 +1,14 @@
 import { EventEntityType } from "./eventEntityType.enum";
 
 export interface ScheduledEvent {
-    id: number;
-    guildId: number;
+    id: string;
+    guildId: string;
     name: string;
     startTime: Date;
     endTime: Date;
-    createdBy: number;
-    threadId: number | null;
-    threadMembers: number[];
+    createdBy: string;
+    threadId: string | null;
+    threadMembers: string[];
     entityType: EventEntityType;
     location: string;
 }

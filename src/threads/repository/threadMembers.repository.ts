@@ -7,7 +7,7 @@ export class ThreadMembersRepository {
         private readonly discordHttpService: DiscordHttpService,
     ) {}
 
-    async addMember(channelId: number, memberId: number): Promise<void> {
+    async addMember(channelId: string, memberId: string): Promise<void> {
         return this.discordHttpService.request({
             method: 'put',
             path: `/channels/${channelId}/thread-members/${memberId}`,

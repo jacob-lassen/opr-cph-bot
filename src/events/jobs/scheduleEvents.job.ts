@@ -28,7 +28,7 @@ export class ScheduleEventsJob {
         private readonly configService: ConfigService,
     ) {}
 
-    @Cron('0 0 9 * * *', { name: 'schedule-events', timeZone: 'Europe/Copenhagen' })
+    @Cron('0 06 18 * * *', { name: 'schedule-events', timeZone: 'Europe/Copenhagen' })
     async handle() {
         console.log('Scheduling events');
         const discordConfig = this.configService.get('discord') as DiscordConfig;
@@ -46,7 +46,7 @@ export class ScheduleEventsJob {
 
             const scheduledEvent: ScheduledEvent = {
                 id: null,
-                guildId: parseInt(discordConfig.guildId),
+                guildId: discordConfig.guildId,
                 name: schedule.eventName,
                 startTime: start.toJSDate(),
                 endTime: end.toJSDate(),

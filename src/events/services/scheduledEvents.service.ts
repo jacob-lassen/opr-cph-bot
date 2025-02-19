@@ -30,7 +30,7 @@ export class ScheduledEventsService {
         await this.scheduledEventsRepository.saveEventCache(event);
     }
 
-    async addMember(eventId: number, memberId: number): Promise<void> {
+    async addMember(eventId: string, memberId: string): Promise<void> {
         let event: ScheduledEvent;
         event = await this.scheduledEventsRepository.getEvent(eventId);
         if (!event) {
